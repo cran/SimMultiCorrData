@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Allison C Fialkowski" />
+
+<meta name="date" content="2017-06-29" />
+
+<title>Overall Workflow for Data Simulation</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Overall Workflow for Data Simulation</h1>
+<h4 class="author"><em>Allison C Fialkowski</em></h4>
+<h4 class="date"><em>2017-06-29</em></h4>
+
+
+
+<p>A <strong>step-by-step guideline</strong> for data simulation is as follows:</p>
+<ol style="list-style-type: decimal">
+<li><p>Obtain the <strong>distribution parameters</strong> for the desired variables.</p>
+<ol style="list-style-type: lower-alpha">
+<li><em>Continuous variables</em>: these are mean, variance, skewness and standardized kurtosis (kurtosis - 3) for <span class="citation">Fleishman (1978)</span>’s third-order method, plus standardized fifth and sixth cumulants for <span class="citation">Headrick (2002)</span>’s fifth-order method. If the goal is to simulate a theoretical distribution (i.e. Gamma, Beta, Logistic, etc.), these values can be obtained using <code>calc_theory</code>. If the goal is to mimic an empirical data set, these values can be found using <code>calc_moments</code> (using the method of moments) or <code>calc_fisherk</code> (using Fisher’s k-statistics). If the standardized cumulants are obtained from <code>calc_theory</code>, the user may need to use rounded values as inputs (i.e. <code>skews = round(skews, 8)</code>). Due to the nature of the integration involved in <code>calc_theory</code>, the results are approximations. Greater accuracy can be achieved by increasing the number of subdivisions (<code>sub</code>) used in the integration process. For example, in order to ensure that skew is exactly 0 for symmetric distributions. For some sets of cumulants, it is either not possible to find power method constants or the calculated constants do not generate valid power method pdfs. In these situations, adding a value to the sixth cumulant may provide solutions (see <code>find_constants</code>). If simulation results indicate that a continuous variable does not generate a valid pdf, the user can try <code>find_constants</code> with various sixth cumulant correction vectors to determine if a valid pdf can be found.</li>
+<li><em>Ordinal variables</em> (<span class="math inline">\(\Large r \ge 2\)</span> categories): these are the cumulative marginal probabilities and support values (if desired). The probabilities should be combined into a list of length equal to the number of ordinal variables. The i-th element is a vector of the cumulative probabilities defining the marginal distribution of the i-th variable. If the variable can take r values, the vector will contain r - 1 probabilities (the r-th is assumed to be 1). For binary variables, the probability should be the probability of achieving the <span class="math inline">\(\Large 1^{st}\)</span> support value. The support values should be combined into a separate list. The i-th element is a vector containing the r ordered support values. If not provided, the default is for the i-th element to be the vector 1, …, r.</li>
+<li><em>Poisson variables</em>: the lambda (mean) values should be given as a vector (see <code>stats::dpois</code>).</li>
+<li><em>Negative Binomial variables</em>: the sizes (target number of successes) and either the success probabilities or the means should be given as vectors (see see <code>stats::dnbinom</code>). The variable represents the number of failures which occur in a sequence of Bernoulli trials before the target number of successes is achieved.</li>
+</ol></li>
+<li><p>If continuous variables are desired, verify that the standardized kurtoses are greater than the <strong>lower kurtosis bounds</strong>. These bounds can be calculated using <code>calc_lower_skurt</code>, given the skewness (for <code>method</code> = “Fleishman”) and standardized fifth and sixth cumulants (for <code>method</code> = “Polynomial”, referring to Headrick’s method) for each variable. Different seeds should be examined to see if a lower boundary can be found. If a lower bound produces power method constants that yield an invalid pdf, the user may wish to provide a <code>Skurt</code> vector of kurtosis corrections. In this case, <code>calc_lower_skurt</code> will attempt to find the smallest value that produces a kurtosis which yields a valid power method pdf. In addition, if <code>method</code> = “Polynomial”, a sixth cumulant correction vector (<code>Six</code>) may be used to facilitate convergence of the root-solving algorithm. Since this step can take considerable computation time, the user may instead wish to perform this check after simulation if any of the variables have invalid power method pdfs.</p></li>
+<li><p>Check if the target correlation matrix falls within the <strong>feasible correlation bounds</strong>, given the parameters for the desired distributions. The <em>ordering of the variables</em> in the correlation matrix <em>MUST</em> be 1st ordinal, 2nd continuous, 3rd Poisson, and 4th Negative Binomial. These bounds can be calculated using either <code>valid_corr</code> (method 1) or <code>valid_corr2</code> (method 2). Note that falling within these bounds does not guarantee that the target correlation can be achieved. However, the check can alert the user to pairwise correlations that obviously fall outside the bounds.</p></li>
+<li><p><strong>Generate the variables</strong> using either method 1 and <code>rcorrvar</code> or method 2 and <code>rcorrvar2</code>. The user may want to try both to see which gives a better approximation to the variables and correlation matrix. The accuracy and simulation time will vary by situation. Again, the <em>ordering of the variables</em> in the correlation matrix <em>MUST</em> be 1st ordinal, 2nd continuous, 3rd Poisson, and 4th Negative Binomial. In addition, the error loop can minimize the correlation errors in most situations.</p></li>
+<li><p><strong>Summarize the results numerically</strong>. The functions <code>rcorrvar</code> and <code>rcorrvar2</code> provide data.frames containing summaries by variable type and the maximum error between the final and target correlation matrices. Additional summary functions include: <code>sim_cdf_prob</code> (to calculate a cumulative probability up to a given continuous y value), <code>power_norm_corr</code> (to calculate the correlation between a continuous variable and the generating standard normal variable), <code>stats_pdf</code> (to calculate the 100 * alpha percent symmetric trimmed mean, median, mode, and maximum height of a valid power method pdf).</p></li>
+<li><p><strong>Summarize the results graphically</strong>. Comparing the simulated data to the target distribution demonstrates simulation accuracy. The graphing functions provided in this package can be used to display simulated data values, pdfs, or cdfs. The target distributions (either by theoretical distribution name or given an empirical data set) can be added to the data value or pdf plots. Cumulative probabilities can be added to the cdf plots (for continuous variables).</p></li>
+</ol>
+<div id="example" class="section level2">
+<h2>Example</h2>
+<p>The following example generates 3 continuous, 1 binary, 1 ordinal, 3 Poisson, and 2 Negative Binomial variables. The standardized cumulants produce power method constants that yield valid pdfs, so no sixth cumulant corrections are needed. See the <strong>Using the Sixth Cumulant Correction to Find Valid Power Method Pdfs</strong> vignette for examples of using the sixth cumulant correction. (Note that the <code>printr</code> package is invoked to display the tables.)</p>
+<p>The <strong>continuous variables</strong> come from the following distributions:</p>
+<ol style="list-style-type: decimal">
+<li>Normal(<span class="math inline">\(\Large 0, 1\)</span>)</li>
+<li>Chisq (<span class="math inline">\(\Large df = 4\)</span>)</li>
+<li>Beta (<span class="math inline">\(\Large \alpha = 4, \beta = 2\)</span>)</li>
+</ol>
+<p>The <strong>ordinal variables</strong> have the following cumulative probabilities:</p>
+<ol style="list-style-type: decimal">
+<li>0.3 (<em>2 categories</em>)</li>
+<li>c(0.2, 0.5, 0.9) (<em>4 categories</em>)</li>
+</ol>
+<p>The last probability in each case is assumed to be 1, and should not be included. The binary variables do not have to be listed first.</p>
+<p>The <strong>Poisson variables</strong> have the following lambda (mean, <code>lam</code>) values:</p>
+<ol style="list-style-type: decimal">
+<li>1</li>
+<li>5</li>
+<li>10</li>
+</ol>
+<p>The <strong>Negative Binomial variables</strong> have the following sizes and success probabilities:</p>
+<ol style="list-style-type: decimal">
+<li>size &lt;- 3, prob &lt;- 0.2</li>
+<li>size &lt;- 6, prob &lt;- 0.8</li>
+</ol>
+<p>Either success probabilities (<code>prob</code>) or means (<code>mu</code>) should be given for all variables.</p>
+<div id="step-1-set-up-the-distributions-and-obtain-the-standardized-cumulants" class="section level3">
+<h3>Step 1: Set up the distributions and obtain the standardized cumulants</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(SimMultiCorrData)
+<span class="kw">library</span>(printr)
+
+<span class="co"># Turn off scientific notation</span>
+<span class="kw">options</span>(<span class="dt">scipen =</span> <span class="dv">999</span>)
+
+<span class="co"># Set seed and sample size</span>
+seed &lt;-<span class="st"> </span><span class="dv">1234</span>
+n &lt;-<span class="st"> </span><span class="dv">10000</span>
+
+<span class="co"># Continuous Distributions</span>
+Dist &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Gaussian&quot;</span>, <span class="st">&quot;Chisq&quot;</span>, <span class="st">&quot;Beta&quot;</span>)
+
+<span class="co"># Calculate standardized cumulants</span>
+<span class="co"># Those for the normal distribution are rounded to ensure the correct values </span>
+<span class="co"># are obtained.</span>
+M1 &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">calc_theory</span>(<span class="dt">Dist =</span> <span class="st">&quot;Gaussian&quot;</span>, <span class="dt">params =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)), <span class="dv">8</span>)
+M2 &lt;-<span class="st"> </span><span class="kw">calc_theory</span>(<span class="dt">Dist =</span> <span class="st">&quot;Chisq&quot;</span>, <span class="dt">params =</span> <span class="dv">4</span>)
+M3 &lt;-<span class="st"> </span><span class="kw">calc_theory</span>(<span class="dt">Dist =</span> <span class="st">&quot;Beta&quot;</span>, <span class="dt">params =</span> <span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">2</span>))
+M &lt;-<span class="st"> </span><span class="kw">cbind</span>(M1, M2, M3)
+
+<span class="co"># Binary and Ordinal Distributions</span>
+marginal &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="fl">0.3</span>, <span class="kw">c</span>(<span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="fl">0.9</span>))
+support &lt;-<span class="st"> </span><span class="kw">list</span>() <span class="co"># default support will be generated inside simulation</span>
+
+<span class="co"># Poisson Distributions</span>
+lam &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">10</span>)
+
+<span class="co"># Negative Binomial Distributions</span>
+size &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">6</span>)
+prob &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.2</span>, <span class="fl">0.8</span>)
+
+ncat &lt;-<span class="st"> </span><span class="kw">length</span>(marginal)
+ncont &lt;-<span class="st"> </span><span class="kw">ncol</span>(M)
+npois &lt;-<span class="st"> </span><span class="kw">length</span>(lam)
+nnb &lt;-<span class="st"> </span><span class="kw">length</span>(size)
+
+<span class="co"># Create correlation matrix from a uniform distribution (-0.7, 0.7)</span>
+<span class="kw">set.seed</span>(seed)
+Rey &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="dv">1</span>, <span class="dt">nrow =</span> (ncat +<span class="st"> </span>ncont +<span class="st"> </span>npois +<span class="st"> </span>nnb))
+for (i in <span class="dv">1</span>:<span class="kw">nrow</span>(Rey)) {
+  for (j in <span class="dv">1</span>:<span class="kw">ncol</span>(Rey)) {
+    if (i &gt;<span class="st"> </span>j) Rey[i, j] &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>, -<span class="fl">0.7</span>, <span class="fl">0.7</span>)
+    Rey[j, i] &lt;-<span class="st"> </span>Rey[i, j]
+  }
+}
+
+<span class="co"># Test for positive-definiteness</span>
+<span class="kw">library</span>(Matrix)
+if(<span class="kw">min</span>(<span class="kw">eigen</span>(Rey, <span class="dt">symmetric =</span> <span class="ot">TRUE</span>)$values) &lt;<span class="st"> </span><span class="dv">0</span>) {
+  Rey &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(<span class="kw">nearPD</span>(Rey, <span class="dt">corr =</span> T, <span class="dt">keepDiag =</span> T)$mat)
+}</code></pre></div>
+</div>
+<div id="step-2-calculate-the-lower-kurtosis-bounds-for-the-continuous-variables" class="section level3">
+<h3>Step 2: Calculate the lower kurtosis bounds for the continuous variables</h3>
+<p>Since this step takes considerable computation time, the user may wish to calculate these after simulation.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Lower &lt;-<span class="st"> </span><span class="kw">list</span>()
+
+<span class="co"># list of standardized kurtosis values to add in case only invalid power </span>
+<span class="co">#     method pdfs are produced</span>
+Skurt &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">seq</span>(<span class="fl">0.5</span>, <span class="dv">2</span>, <span class="fl">0.5</span>), <span class="kw">seq</span>(<span class="fl">0.02</span>, <span class="fl">0.05</span>, <span class="fl">0.01</span>), <span class="kw">seq</span>(<span class="fl">0.02</span>, <span class="fl">0.05</span>, <span class="fl">0.01</span>))
+
+start.time &lt;-<span class="st"> </span><span class="kw">Sys.time</span>()
+for (i in <span class="dv">1</span>:<span class="kw">ncol</span>(M)) {
+  Lower[[i]] &lt;-<span class="st"> </span><span class="kw">calc_lower_skurt</span>(<span class="dt">method =</span> <span class="st">&quot;Polynomial&quot;</span>, <span class="dt">skews =</span> M[<span class="dv">3</span>, i], 
+                                 <span class="dt">fifths =</span> M[<span class="dv">5</span>, i], <span class="dt">sixths =</span> M[<span class="dv">6</span>, i], 
+                                 <span class="dt">Skurt =</span> Skurt[[i]], <span class="dt">seed =</span> <span class="dv">104</span>)
+}</code></pre></div>
+<pre><code>## Only invalid pdf constants could be found.
+##                Try more starting values (increase n)
+##                or a different seed or Skurt vector.
+##                Also verify standardized cumulant values.</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">stop.time &lt;-<span class="st"> </span><span class="kw">Sys.time</span>()
+Time &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">difftime</span>(stop.time, start.time, <span class="dt">units =</span> <span class="st">&quot;min&quot;</span>), <span class="dv">3</span>)
+<span class="kw">cat</span>(<span class="st">&quot;Total computation time:&quot;</span>, Time, <span class="st">&quot;minutes </span><span class="ch">\n</span><span class="st">&quot;</span>)</code></pre></div>
+<pre><code>## Total computation time: 0.718 minutes</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Note the message given for Distribution 1 (Normal).</span></code></pre></div>
+<p>In each case, the lower kurtosis boundary calculated from the original Lagrangean constraint equations (see <code>poly_skurt_check</code>) generates constants that yield an invalid power method pdf. This is indicated by the fact that each <code>Invalid.C</code> data.frame contains solutions (i.e. see <code>Lower[[2]]$Invalid.C</code>).</p>
+<p>For Distributions 2 and 3, lower kurtosis values that generate constants that yield valid power method pdfs could be found by adding the values displayed in <code>SkurtCorr1</code> to the original lower kurtosis boundary. For Distribution 1 (Normal), no kurtosis addition (of those specified in <code>Skurt</code>) generated constants that yield a valid pdf. This does not cause a problem since the simulated variable has a valid power method pdf.</p>
+<p>Look at lower kurtosis boundaries and sixth cumulant corrections:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Normal(<span class="math inline">\(\Large 0,1\)</span>) Distribution:</strong></li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(Lower[[<span class="dv">1</span>]]$Min[<span class="dv">1</span>, <span class="kw">c</span>(<span class="st">&quot;skew&quot;</span>, <span class="st">&quot;fifth&quot;</span>, <span class="st">&quot;sixth&quot;</span>, <span class="st">&quot;valid.pdf&quot;</span>, 
+                              <span class="st">&quot;skurtosis&quot;</span>)], 
+          <span class="dt">nrow =</span> <span class="dv">1</span>, <span class="dt">ncol =</span> <span class="dv">5</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>) </code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="left">skew</th>
+<th align="left">fifth</th>
+<th align="left">sixth</th>
+<th align="left">valid.pdf</th>
+<th align="left">skurtosis</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>7</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">FALSE</td>
+<td align="left">-0.2829743</td>
+</tr>
+</tbody>
+</table>
+<p>Note that <code>valid.pdf = FALSE</code>, which means that a kurtosis correction could not be found that yielded constants that produce a valid power method pdf. The original lower kurtosis boundary (see <code>Lower[[1]]$Min</code>) is -0.282974. The standardized kurtosis for the distribution (0) falls above this boundary.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Chisq(<span class="math inline">\(\Large df = 4\)</span>) Distribution:</strong></li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(Lower[[<span class="dv">2</span>]]$Min[<span class="dv">1</span>, <span class="kw">c</span>(<span class="st">&quot;skew&quot;</span>, <span class="st">&quot;fifth&quot;</span>, <span class="st">&quot;sixth&quot;</span>, <span class="st">&quot;valid.pdf&quot;</span>, 
+                              <span class="st">&quot;skurtosis&quot;</span>)], 
+          <span class="dt">nrow =</span> <span class="dv">1</span>, <span class="dt">ncol =</span> <span class="dv">5</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>) </code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skew</th>
+<th align="left">fifth</th>
+<th align="left">sixth</th>
+<th align="left">valid.pdf</th>
+<th align="left">skurtosis</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1.414214</td>
+<td align="left">8.485281</td>
+<td align="left">30</td>
+<td align="left">TRUE</td>
+<td align="left">3.005959</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Lower[[<span class="dv">2</span>]]$SkurtCorr1</code></pre></div>
+<pre><code>## [1] 0.03</code></pre>
+<p>The original lower kurtosis boundary (see <code>Lower[[2]]$Invalid.C</code>) of 2.975959 has been increased to 3.005959, so that the kurtosis correction is 0.03. The standardized kurtosis for the distribution (3) is approximately equal to this boundary. This does not cause a problem since the simulated variable has a valid power method pdf.</p>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Beta(<span class="math inline">\(\Large \alpha = 4, \beta = 2\)</span>) Distribution:</strong></li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(Lower[[<span class="dv">3</span>]]$Min[<span class="dv">1</span>, <span class="kw">c</span>(<span class="st">&quot;skew&quot;</span>, <span class="st">&quot;fifth&quot;</span>, <span class="st">&quot;sixth&quot;</span>, <span class="st">&quot;valid.pdf&quot;</span>, 
+                              <span class="st">&quot;skurtosis&quot;</span>)], 
+          <span class="dt">nrow =</span> <span class="dv">1</span>, <span class="dt">ncol =</span> <span class="dv">5</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>) </code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skew</th>
+<th align="left">fifth</th>
+<th align="left">sixth</th>
+<th align="left">valid.pdf</th>
+<th align="left">skurtosis</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">-0.4677072</td>
+<td align="left">1.403122</td>
+<td align="left">-0.4261364</td>
+<td align="left">TRUE</td>
+<td align="left">-0.3722661</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Lower[[<span class="dv">3</span>]]$SkurtCorr1</code></pre></div>
+<pre><code>## [1] 0.02</code></pre>
+<p>The original lower kurtosis boundary (see <code>Lower[[3]]$Invalid.C</code>) of -0.392266 has been increased to -0.372266, so that the kurtosis correction is 0.02. The standardized kurtosis for the distribution (-0.2727) falls above this boundary.</p>
+<p>The remaining steps vary by simulation method:</p>
+</div>
+<div id="method-1" class="section level3">
+<h3>Method 1</h3>
+<div id="step-3-verify-the-target-correlation-matrix-falls-within-the-feasible-correlation-bounds" class="section level4">
+<h4>Step 3: Verify the target correlation matrix falls within the feasible correlation bounds</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Make sure Rey is within upper and lower correlation limits</span>
+valid &lt;-<span class="st"> </span><span class="kw">valid_corr</span>(<span class="dt">k_cat =</span> ncat, <span class="dt">k_cont =</span> ncont, <span class="dt">k_pois =</span> npois,
+                    <span class="dt">k_nb =</span> nnb, <span class="dt">method =</span> <span class="st">&quot;Polynomial&quot;</span>, <span class="dt">means =</span>  M[<span class="dv">1</span>, ],
+                    <span class="dt">vars =</span>  (M[<span class="dv">2</span>, ])^<span class="dv">2</span>, <span class="dt">skews =</span> M[<span class="dv">3</span>, ], <span class="dt">skurts =</span> M[<span class="dv">4</span>, ],
+                    <span class="dt">fifths =</span> M[<span class="dv">5</span>, ], <span class="dt">sixths =</span> M[<span class="dv">6</span>, ], <span class="dt">marginal =</span> marginal, 
+                    <span class="dt">lam =</span> lam, <span class="dt">size =</span> size, <span class="dt">prob =</span> prob, <span class="dt">rho =</span> Rey, 
+                    <span class="dt">seed =</span> seed)</code></pre></div>
+<pre><code>## 
+##  Constants: Distribution  1  
+## 
+##  Constants: Distribution  2  
+## 
+##  Constants: Distribution  3  
+## All correlations are in feasible range!</code></pre>
+</div>
+<div id="step-4-generate-the-variables" class="section level4">
+<h4>Step 4: Generate the variables</h4>
+<p>Simulate variables without the error loop.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">A &lt;-<span class="st"> </span><span class="kw">rcorrvar</span>(<span class="dt">n =</span> <span class="dv">10000</span>, <span class="dt">k_cont =</span> ncont, <span class="dt">k_cat =</span> ncat, <span class="dt">k_pois =</span> npois,
+              <span class="dt">k_nb =</span> nnb, <span class="dt">method =</span> <span class="st">&quot;Polynomial&quot;</span>, <span class="dt">means =</span>  M[<span class="dv">1</span>, ], 
+              <span class="dt">vars =</span>  (M[<span class="dv">2</span>, ])^<span class="dv">2</span>, <span class="dt">skews =</span> M[<span class="dv">3</span>, ], <span class="dt">skurts =</span> M[<span class="dv">4</span>, ], 
+              <span class="dt">fifths =</span> M[<span class="dv">5</span>, ], <span class="dt">sixths =</span> M[<span class="dv">6</span>, ], <span class="dt">marginal =</span> marginal,
+              <span class="dt">lam =</span> lam, <span class="dt">size =</span> size, <span class="dt">prob =</span> prob, <span class="dt">rho =</span> Rey, <span class="dt">seed =</span> seed)</code></pre></div>
+<pre><code>## 
+##  Constants: Distribution  1  
+## 
+##  Constants: Distribution  2  
+## 
+##  Constants: Distribution  3  
+## 
+## Constants calculation time: 0 minutes 
+## Intercorrelation calculation time: 0.114 minutes 
+## Error loop calculation time: 0 minutes 
+## Total Simulation time: 0.116 minutes</code></pre>
+<p>Look at the maximum correlation error:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">paste</span>(<span class="st">&quot;The maximum correlation error without the error loop is &quot;</span>, 
+          <span class="kw">round</span>(A$maxerr, <span class="dv">5</span>), <span class="st">&quot;.&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>))</code></pre></div>
+<pre><code>## The maximum correlation error without the error loop is 0.0863.</code></pre>
+<p>Look at the interquartile-range of correlation errors:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Acorr_error =<span class="st"> </span><span class="kw">round</span>(A$correlations -<span class="st"> </span>Rey, <span class="dv">6</span>)
+<span class="kw">cat</span>(<span class="kw">paste</span>(<span class="st">&quot;The IQR of correlation errors without the error loop is [&quot;</span>, 
+          <span class="kw">round</span>(<span class="kw">quantile</span>(<span class="kw">as.numeric</span>(Acorr_error), <span class="fl">0.25</span>), <span class="dv">5</span>), <span class="st">&quot;, &quot;</span>,
+          <span class="kw">round</span>(<span class="kw">quantile</span>(<span class="kw">as.numeric</span>(Acorr_error), <span class="fl">0.75</span>), <span class="dv">5</span>), <span class="st">&quot;].&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>))</code></pre></div>
+<pre><code>## The IQR of correlation errors without the error loop is [-0.01801, 0.02304].</code></pre>
+<p>Note the <strong>warning messages</strong> produced above (suppressed in execution for this vignette). These indicate:</p>
+<ol style="list-style-type: decimal">
+<li><p>It may not be possible to generate the desired correlation matrix with ordinal variables having the specified marginals, and</p></li>
+<li><p>The nearest positive-definite matrix was used.</p></li>
+</ol>
+<p>This presents an excellent situation for using the error loop.</p>
+<p>Simulate variables with the error loop (using default settings of <code>epsilon</code> = 0.001 and <code>maxit</code> = 1000).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">B &lt;-<span class="st"> </span><span class="kw">rcorrvar</span>(<span class="dt">n =</span> <span class="dv">10000</span>, <span class="dt">k_cont =</span> ncont, <span class="dt">k_cat =</span> ncat, <span class="dt">k_pois =</span> npois,
+              <span class="dt">k_nb =</span> nnb, <span class="dt">method =</span> <span class="st">&quot;Polynomial&quot;</span>, <span class="dt">means =</span>  M[<span class="dv">1</span>, ], 
+              <span class="dt">vars =</span>  (M[<span class="dv">2</span>, ])^<span class="dv">2</span>, <span class="dt">skews =</span> M[<span class="dv">3</span>, ], <span class="dt">skurts =</span> M[<span class="dv">4</span>, ], 
+              <span class="dt">fifths =</span> M[<span class="dv">5</span>, ], <span class="dt">sixths =</span> M[<span class="dv">6</span>, ], <span class="dt">marginal =</span> marginal,
+              <span class="dt">lam =</span> lam, <span class="dt">size =</span> size, <span class="dt">prob =</span> prob, <span class="dt">rho =</span> Rey, <span class="dt">seed =</span> seed, 
+              <span class="dt">errorloop =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## 
+##  Constants: Distribution  1  
+## 
+##  Constants: Distribution  2  
+## 
+##  Constants: Distribution  3  
+## 
+## Constants calculation time: 0 minutes 
+## Intercorrelation calculation time: 0.107 minutes 
+## Error loop calculation time: 0.03 minutes 
+## Total Simulation time: 0.138 minutes</code></pre>
+<p>Look at the maximum correlation error:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">paste</span>(<span class="st">&quot;The maximum correlation error with the error loop is &quot;</span>, 
+          <span class="kw">round</span>(B$maxerr, <span class="dv">5</span>), <span class="st">&quot;.&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>))</code></pre></div>
+<pre><code>## The maximum correlation error with the error loop is 0.00093.</code></pre>
+<p>Look at the interquartile-range of correlation errors:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Bcorr_error =<span class="st"> </span><span class="kw">round</span>(B$correlations -<span class="st"> </span>Rey, <span class="dv">6</span>)
+<span class="kw">cat</span>(<span class="kw">paste</span>(<span class="st">&quot;The IQR of correlation errors with the error loop is [&quot;</span>, 
+          <span class="kw">round</span>(<span class="kw">quantile</span>(<span class="kw">as.numeric</span>(Bcorr_error), <span class="fl">0.25</span>), <span class="dv">5</span>), <span class="st">&quot;, &quot;</span>,
+          <span class="kw">round</span>(<span class="kw">quantile</span>(<span class="kw">as.numeric</span>(Bcorr_error), <span class="fl">0.75</span>), <span class="dv">5</span>), <span class="st">&quot;].&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>))</code></pre></div>
+<pre><code>## The IQR of correlation errors with the error loop is [-0.00028, 0.00007].</code></pre>
+<p>The simulation utilizing the error loop provides better results and will be chosen for subsequent analysis.</p>
+</div>
+<div id="step-5-summarize-the-results-numerically" class="section level4">
+<h4>Step 5: Summarize the results numerically</h4>
+<p><strong>1) Ordinal variables</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr::<span class="kw">kable</span>(B$summary_ordinal[[<span class="dv">1</span>]], <span class="dt">caption =</span> <span class="st">&quot;Variable 1&quot;</span>)</code></pre></div>
+<table>
+<caption>Variable 1</caption>
+<thead>
+<tr class="header">
+<th align="right">Target</th>
+<th align="right">Simulated</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.3</td>
+<td align="right">0.2989</td>
+</tr>
+<tr class="even">
+<td align="right">1.0</td>
+<td align="right">1.0000</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr::<span class="kw">kable</span>(B$summary_ordinal[[<span class="dv">2</span>]], <span class="dt">caption =</span> <span class="st">&quot;Variable 2&quot;</span>)</code></pre></div>
+<table>
+<caption>Variable 2</caption>
+<thead>
+<tr class="header">
+<th align="right">Target</th>
+<th align="right">Simulated</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.2</td>
+<td align="right">0.2001</td>
+</tr>
+<tr class="even">
+<td align="right">0.5</td>
+<td align="right">0.4994</td>
+</tr>
+<tr class="odd">
+<td align="right">0.9</td>
+<td align="right">0.9029</td>
+</tr>
+<tr class="even">
+<td align="right">1.0</td>
+<td align="right">1.0000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>2) Count variables</strong></p>
+<p>Poisson variables: Note the expected means and variances are also given.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(B$summary_Poisson[, <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>:<span class="dv">6</span>, <span class="dv">8</span>:<span class="dv">9</span>)], <span class="dt">nrow =</span> <span class="dv">3</span>, <span class="dt">ncol =</span> <span class="dv">7</span>, 
+          <span class="dt">byrow =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">Distribution</th>
+<th align="right">mean</th>
+<th align="right">Exp_mean</th>
+<th align="right">var</th>
+<th align="right">Exp_var</th>
+<th align="right">min</th>
+<th align="right">max</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">1.0011</td>
+<td align="right">1</td>
+<td align="right">1.000399</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">5.0038</td>
+<td align="right">5</td>
+<td align="right">4.996485</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">15</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">9.9992</td>
+<td align="right">10</td>
+<td align="right">9.943794</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">24</td>
+</tr>
+</tbody>
+</table>
+<p>Negative Binomial variables:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(B$summary_Neg_Bin[, <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>:<span class="dv">7</span>, <span class="dv">9</span>:<span class="dv">10</span>)], <span class="dt">nrow =</span> <span class="dv">2</span>, <span class="dt">ncol =</span> <span class="dv">8</span>, 
+          <span class="dt">byrow =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">Distribution</th>
+<th align="right">success_prob</th>
+<th align="right">mean</th>
+<th align="right">Exp_mean</th>
+<th align="right">var</th>
+<th align="right">Exp_var</th>
+<th align="right">min</th>
+<th align="right">max</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">0.2</td>
+<td align="right">11.9999</td>
+<td align="right">12.0</td>
+<td align="right">59.533853</td>
+<td align="right">60.000</td>
+<td align="right">0</td>
+<td align="right">60</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">0.8</td>
+<td align="right">1.4967</td>
+<td align="right">1.5</td>
+<td align="right">1.849174</td>
+<td align="right">1.875</td>
+<td align="right">0</td>
+<td align="right">9</td>
+</tr>
+</tbody>
+</table>
+<p><strong>3) Continuous variables</strong></p>
+<p>Constants:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(<span class="kw">round</span>(B$constants, <span class="dv">6</span>), <span class="dt">nrow =</span> <span class="dv">3</span>, <span class="dt">ncol =</span> <span class="dv">6</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">c0</th>
+<th align="right">c1</th>
+<th align="right">c2</th>
+<th align="right">c3</th>
+<th align="right">c4</th>
+<th align="right">c5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.000000</td>
+<td align="right">1.000000</td>
+<td align="right">0.000000</td>
+<td align="right">0.000000</td>
+<td align="right">0.000000</td>
+<td align="right">0.000000</td>
+</tr>
+<tr class="even">
+<td align="right">-0.227508</td>
+<td align="right">0.900716</td>
+<td align="right">0.231610</td>
+<td align="right">0.015466</td>
+<td align="right">-0.001367</td>
+<td align="right">0.000055</td>
+</tr>
+<tr class="odd">
+<td align="right">0.108304</td>
+<td align="right">1.104253</td>
+<td align="right">-0.123347</td>
+<td align="right">-0.045284</td>
+<td align="right">0.005014</td>
+<td align="right">0.001285</td>
+</tr>
+</tbody>
+</table>
+<p>Target distributions:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(<span class="kw">round</span>(B$summary_targetcont, <span class="dv">5</span>), <span class="dt">nrow =</span> <span class="dv">3</span>, <span class="dt">ncol =</span> <span class="dv">7</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Distribution</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">skew</th>
+<th align="right">skurtosis</th>
+<th align="right">fifth</th>
+<th align="right">sixth</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>M1</td>
+<td align="right">1</td>
+<td align="right">0.00000</td>
+<td align="right">1.00000</td>
+<td align="right">0.00000</td>
+<td align="right">0.000</td>
+<td align="right">0.00000</td>
+<td align="right">0.00000</td>
+</tr>
+<tr class="even">
+<td>M2</td>
+<td align="right">2</td>
+<td align="right">4.00000</td>
+<td align="right">2.82843</td>
+<td align="right">1.41421</td>
+<td align="right">3.000</td>
+<td align="right">8.48528</td>
+<td align="right">30.00000</td>
+</tr>
+<tr class="odd">
+<td>M3</td>
+<td align="right">3</td>
+<td align="right">0.66667</td>
+<td align="right">0.17817</td>
+<td align="right">-0.46771</td>
+<td align="right">-0.375</td>
+<td align="right">1.40312</td>
+<td align="right">-0.42614</td>
+</tr>
+</tbody>
+</table>
+<p>Simulated distributions:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(<span class="kw">round</span>(B$summary_continuous[, <span class="kw">c</span>(<span class="st">&quot;Distribution&quot;</span>, <span class="st">&quot;mean&quot;</span>, <span class="st">&quot;sd&quot;</span>, 
+                                         <span class="st">&quot;skew&quot;</span>, <span class="st">&quot;skurtosis&quot;</span>, <span class="st">&quot;fifth&quot;</span>, 
+                                         <span class="st">&quot;sixth&quot;</span>)], <span class="dv">5</span>), <span class="dt">nrow =</span> <span class="dv">3</span>, <span class="dt">ncol =</span> <span class="dv">7</span>, 
+          <span class="dt">byrow =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Distribution</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">skew</th>
+<th align="right">skurtosis</th>
+<th align="right">fifth</th>
+<th align="right">sixth</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>X1</td>
+<td align="right">1</td>
+<td align="right">0.00000</td>
+<td align="right">1.00000</td>
+<td align="right">-0.01293</td>
+<td align="right">-0.08217</td>
+<td align="right">-0.00829</td>
+<td align="right">0.32430</td>
+</tr>
+<tr class="even">
+<td>X2</td>
+<td align="right">2</td>
+<td align="right">3.99971</td>
+<td align="right">2.81240</td>
+<td align="right">1.34867</td>
+<td align="right">2.69738</td>
+<td align="right">7.56175</td>
+<td align="right">26.58814</td>
+</tr>
+<tr class="odd">
+<td>X3</td>
+<td align="right">3</td>
+<td align="right">0.66666</td>
+<td align="right">0.17859</td>
+<td align="right">-0.46062</td>
+<td align="right">-0.40467</td>
+<td align="right">1.39676</td>
+<td align="right">-0.22504</td>
+</tr>
+</tbody>
+</table>
+<p>Valid power method pdf check:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">B$valid.pdf</code></pre></div>
+<pre><code>## [1] &quot;TRUE&quot; &quot;TRUE&quot; &quot;TRUE&quot;</code></pre>
+<p>All continuous variables have valid power method pdfs. We can compute <strong>additional summary statistics:</strong><br />
+1) Normal(<span class="math inline">\(\Large 0,1\)</span>) Distribution</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(<span class="kw">t</span>(<span class="kw">round</span>(<span class="kw">stats_pdf</span>(<span class="dt">c =</span> B$constants[<span class="dv">1</span>, ], <span class="dt">method =</span> <span class="st">&quot;Polynomial&quot;</span>, 
+                            <span class="dt">alpha =</span> <span class="fl">0.025</span>), <span class="dv">4</span>)))</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">trimmed_mean</th>
+<th align="right">median</th>
+<th align="right">mode</th>
+<th align="right">max_height</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.3989</td>
+</tr>
+</tbody>
+</table>
+<ol start="2" style="list-style-type: decimal">
+<li>Chisq (<span class="math inline">\(\Large df = 4\)</span>) Distribution</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(<span class="kw">t</span>(<span class="kw">round</span>(<span class="kw">stats_pdf</span>(<span class="dt">c =</span> B$constants[<span class="dv">2</span>, ], <span class="dt">method =</span> <span class="st">&quot;Polynomial&quot;</span>, 
+                            <span class="dt">alpha =</span> <span class="fl">0.025</span>), <span class="dv">4</span>)))</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">trimmed_mean</th>
+<th align="right">median</th>
+<th align="right">mode</th>
+<th align="right">max_height</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">-0.0536</td>
+<td align="right">-0.2275</td>
+<td align="right">-0.7095</td>
+<td align="right">0.5203</td>
+</tr>
+</tbody>
+</table>
+<ol start="3" style="list-style-type: decimal">
+<li>Beta (<span class="math inline">\(\Large \alpha = 4, \beta = 2\)</span>) Distribution</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(<span class="kw">t</span>(<span class="kw">round</span>(<span class="kw">stats_pdf</span>(<span class="dt">c =</span> B$constants[<span class="dv">3</span>, ], <span class="dt">method =</span> <span class="st">&quot;Polynomial&quot;</span>, 
+                            <span class="dt">alpha =</span> <span class="fl">0.025</span>), <span class="dv">4</span>)))</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">trimmed_mean</th>
+<th align="right">median</th>
+<th align="right">mode</th>
+<th align="right">max_height</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.0215</td>
+<td align="right">0.1083</td>
+<td align="right">0.4517</td>
+<td align="right">0.3745</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="step-6-summarize-the-results-graphically" class="section level4">
+<h4>Step 6: Summarize the results graphically</h4>
+<p>Look at the Chisq (<span class="math inline">\(\Large df = 4\)</span>) distribution (<span class="math inline">\(\Large 2^{nd}\)</span> continuous variable):</p>
+<ol style="list-style-type: decimal">
+<li>Simulated Data CDF (find cumulative probability up to y = 10)</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_sim_cdf</span>(B$continuous_variables[, <span class="dv">2</span>], <span class="dt">calc_cprob =</span> <span class="ot">TRUE</span>, <span class="dt">delta =</span> <span class="dv">10</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Simulated Data and Target Distribution PDFs</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_sim_pdf_theory</span>(B$continuous_variables[, <span class="dv">2</span>], <span class="dt">Dist =</span> <span class="st">&quot;Chisq&quot;</span>, <span class="dt">params =</span> <span class="dv">4</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Look at the empirical cdf of the <span class="math inline">\(\Large 2^{nd}\)</span> ordinal distribution:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_sim_cdf</span>(B$ordinal_variables[, <span class="dv">2</span>])</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Look at the Poisson (<span class="math inline">\(\Large \lambda = 5\)</span>) distribution (<span class="math inline">\(\Large 2^{nd}\)</span> Poisson variable):</p>
+<ol style="list-style-type: decimal">
+<li>Simulated Data Values and Target Distribution</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_sim_theory</span>(B$Poisson_variables[, <span class="dv">2</span>], <span class="dt">cont_var =</span> <span class="ot">FALSE</span>, <span class="dt">Dist =</span> <span class="st">&quot;Poisson&quot;</span>, 
+                <span class="dt">params =</span> <span class="dv">5</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Simulated Data and Target Distribution PDFs</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_sim_pdf_theory</span>(B$Poisson_variables[, <span class="dv">2</span>], <span class="dt">cont_var =</span> <span class="ot">FALSE</span>, 
+                    <span class="dt">Dist =</span> <span class="st">&quot;Poisson&quot;</span>, <span class="dt">params =</span> <span class="dv">5</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Look at the Negative Binomial (<span class="math inline">\(\Large size = 3,\ prob = 0.2\)</span>) distribution (<span class="math inline">\(\Large 1^{st}\)</span> Negative Binomial variable):</p>
+<ol style="list-style-type: decimal">
+<li>Simulated Data Values and Target Distribution</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_sim_theory</span>(B$Neg_Bin_variables[, <span class="dv">1</span>], <span class="dt">cont_var =</span> <span class="ot">FALSE</span>, 
+                <span class="dt">Dist =</span> <span class="st">&quot;Negative_Binomial&quot;</span>, <span class="dt">params =</span> <span class="kw">c</span>(<span class="dv">3</span>, <span class="fl">0.2</span>))</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Simulated Data and Target Distribution PDFs</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_sim_pdf_theory</span>(B$Neg_Bin_variables[, <span class="dv">1</span>], <span class="dt">cont_var =</span> <span class="ot">FALSE</span>, 
+                <span class="dt">Dist =</span> <span class="st">&quot;Negative_Binomial&quot;</span>, <span class="dt">params =</span> <span class="kw">c</span>(<span class="dv">3</span>, <span class="fl">0.2</span>))</code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkAAAAGwCAMAAAB2PiqAAAAA4VBMVEUAAAAAACsAAFUAAIsAK4AAVVUAVYAAVaoAZAArAAArACsrAFUrKwArKysrK1UrVaorgIArgKorgNQzMzNNTU1NTWtNTYhNa2tNa6ZNiMRVAABVACtVAFVVKwBVVStVVVVVgIBVqv9rTU1rTWtrTYhrpuGAKwCA1KqA1P+ITU2ITWuIa6aIxP+ma02ma4im4f+qVQCq1ICq/6qq/9Sq///EiE3EpmvE4abE/8TE///UgCvU1IDU/6rU/9TU///hpmvh///r6+v/qlX/xIj/1ID/4ab//6r//8T//9T//+H///+PA15DAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAZBUlEQVR4nO2dC3/buJXF5SizUma6u12PJ8243W3VSdxk6mm027httLtxoviR4Pt/oOLBB0gBJIgHcUme80ssmqYOQNy/gAuKjxWDoACtclcAmrYAEBQkAAQFCQBBQQJAUJAAEBQkAAQFCQBBQaIC0GHF9eQdX/pypV7tMmxx9++mDR8uV08/FMv7ldLZa4vr3lystlqWW/+wFlsWVZXdrW6zQ2HW1yiVhE1/G0YTDYD4Divt/AA6rDamDU0AyTJM8gDIUmxVlBVW0+5YzIYCJG0WB9CwVjppnrtnQwCydAz9ALULtxVbFzUgijazgQDZbJKJBECiAzqX8bZ1D+3NfQCS/QHf1NIvxASoLErslaM6AHJpkz6bZKICkAzKUbS4/IWH/pz/xn89FoOOiopsn2JzESC5Un3iN8VIeF5arp78zylA6pX/+JOiVZqcqz88+etV2T9V3vrq1hCmiv2mKONY01IWxU2Kt1VFnL0+lIPooewNu810gLQ2aHops13VFFVa9cxYdEyRAEjsdzPTEJ2Rpp0BoGOVZ5QAyeZSQaneb+6B9uXf9vVW5cAjKlJ766uNAG32JWhVz1YuqnpqtdIT+X3T1mpmB6j2KlPITQsgw965pWUDRAOgopFlS1UAqd5H/tycAsR/8IY5yA+YatKKq3PZ7HI7Sw5UAntc1Sb78i+yE7SsbiTRqlj+89w4WqoFvVaq2L2om9r+UNlazQ5a5FsAlV7Khr+J/7XVFPpuVJtHFQ2ASoKqneetwfe3+ilD2B7CivdtWKPxZfDrQe4UoOLjX3XsZXPvJcBa7KpAlavNACnatEGnCZBWq8JLvk3LxbrNOgDaNdvjUOzypt6j9t4lyJCIAFQNOnUOxBtS/2kCSL6nAuhYIlK+3TgLkytUc1Z/P6hhTZieeGurzQDp7y6L0gDSatUKutrdJkCnZg4A6bupAdTau7kDJHRYlcFxAEjrtNwA0ob/4pe6iXnrFlHbt7y11RaARB/DnTZtd1XPJkA1AGURO9Zt1pVEuwIk965+a1SRAOhYDs1V0tAPkOghnn7QhzCt4x8MkJqZvWan3tpqC0B8k6f/+0yb3zRmYadjWxXFveoRu81iAFTt3VwBUimzRKCnBzquSoBUYI5aD6S1jjEHOgWIb2bMgXTv3hxIbHj2X/rRohpPbqPHrBHF/U7n0mp2CpB5UsHX1+alr753cwZImyJtbDnQoZi7aACpTGKjtRpv62M5LzmZhZ0CZJ6nnDPdW1ttA6hMl073Rk3Sq1ppUVQl11xazXSAtDZoEFHt7a5jFjZrgKrvwsrDIqcAlTmDPoSVeUrR6MUmRdKr5cxCRoCaR0rOflW8XffWVrcBqmK9XzWO0DW/C9NqZTqOU+ZANjMdIK0NGl7l3qrGshwHmjVAZQZcTUpOAZKtt9G6bNFU4gBceeCPbyMbUiFjPRLd+kXGZKfW1UeiNW/7keiq2OKjrrlXYS6rUk7+tCgeNdg7zBpfZdRt0CLiULaesvl//Uj0jrWLjikqAE1a6lgPRbP0AkDhKrJVgmYjCACFqp310jEbRQAoVMWsiKDZKAJAUJAAEBQkAAQFCQBBQQJAUJAAEBQkAAQFKRCg76GlKhJA5tWfwlyTeS3EbIyKAaAZmwGgVF4LMQNAqbwWYgaAUnktxAwApfJaiBkASuW1EDMAlMprIWYAKJXXQswAUCqvhZgBoFReCzEDQKm8FmIGgFJ5LcSMEkBff7l4/r6xyF8uXrVt3Ar1Etkw0TWjBNDNj+Kfvnjz4uP9T29bNm6F9mrLFcvLqGWYEQLo8ee37P7le21RvJzauBXaqRNyArysWoYZIYAEPAUyxWKBU8vGrdAu1fys16Fedi3DjDRAn1/87eLiWloIfYqkrXpZc/Gf23UsXyiR/AHiGfTnH6LnQKoDqvqebd0Lkf2c0zUj3gN95BOx65aNW6F90sauOpkmGya6ZoQAOk2ixW+JAFobfyMbJrpmhAAyTeP5EFYeGooK0Nr8O9kw0TWjBNDjG3n0kFNTLooDiWUHFBOgNj8AiITXFL7KkOnOCT/lKrJhomu2RIAM/BRkkQ0TXbOFAWTlBwAR8JoAQMzGjyKIbJjomi0OIBs/8ngi2TDRNQNA+l/IhomuGQDS/0Q2THTNFgWQPYWWAkCZvagD1MMP/yPZMNE1WxhAnfywLdkw0TVbEEC9HRAAIioiALE+ftjadqqrl+jGHADpigiQ9VxpL9GNOQDSNaA1+vjp32CI6MYcAOmKCdCnmATRjTkA0uXaGluH/gUAkRQJgHrn8MorIkF0Yw6AdEUGKF4eTTfmAEiXW2s48QOAaIoCQMwRoIgE0Y05ANLl2hou2Q0AIqlJARQvjaYbcwCky6k13FIgAERTJABy4kJ6xSKIbswBkC6X1nDsgAAQTVEAyI0K5RUpj6YbcwCky601AFAqsxE0NYAiEUQ35gBIFwDKazaCJgdQnDyabswBkC6H1nCdhAEgmiIAkCMRAIikcgPk3AEBIJqaHkB8+/A8mm7MAZAul9Zw7VEAEElNEKAYM3m6MQdAuhIBFN4F0Y05ANKVBqAIeTTdmJvN1kbFLNdXmQFynsQvHSDnlWNrkgCFNx0AiqW8ALlP4gGQ48qxlRsg90ZoeIVOxABQLOVOogGQkxkAsskToFCCAFAsAaBwZQXoy9Vqtdowdvfdu9MtjCuFHn77Wr53I3/bb4zv+XK16zSRygzQgA9Ryyvs4zcfgETwSxBOVMe+RYECiB2fiLUPlzvju0cFyOt5m9tP/s9EXcTTVKv2tQKkSLDFuA8ghY7C6FRWgPQqZu2BhkzCTryCuqDJ9UCm49CiBarOh4f5y9Ufnq02d/y/DDr/L16OYoh7uFydvea8rAQrfM03CiA1eO3PmdqK3f3bfz757/I93Pv3q9W59CreaVBOgAbxs3CArCt5aEUKpAB6+uHh8umHu29f1wCJTuZ4JleIHuUgNuEvZwog0fmI3qjc6tmO1e9RfjvpLN9pqsR0AQr6RnU+ADHJ0IYVYS7+az0QkwNWsUIsHjkJxRAmNz8WZIitvn3N6vfIIWy/KXzKt7SUN4kGQI5mPdN41eeYAeJD2kr1QGKJLx40gNhhI0cwfavqPRKggwRIvdNUCQAUrpwAqQRYIWMESHQqWg8k3qIDdPedyHlYc6viN9UDndc9mUkTBijkUNBsABJ5ChP5SRMgmec8EYEXhO3P5OAk/lZkOGUOxNf9q8igyq0UQMVvwptnRYWzBaKsAA3Kg0+9AtLo2QDEuwg+unCImgCxw2r169+9kytXq/+42vGXHVNzMTFA/bpKaI4rMVcvtioAqt6jz8LMI1hOgIbl0ADIbeXYmjJAAS0IgGJp0gD5NyEAiqWcAA1rAJOXdxoNgGIpZxIdASDfNpwcQDip3iAAlNpsBE0bIG+C6MbcbLYVMrzmV0aABsZ+QHLga+apMQCKWURU5QNoaOdh8fIjCADFEgAKVy6ASFCVDaCBR4HsXl4EAaBYmjxAfmn01AAyatkARUqih4PYZeYnAMQAUIgyAiTP9LKd6zWKJg+QH0FTA6ijs+m+6qb7rxE0fYC80mgAFEuTT6LZMgAqjzxrr8WfFCL1ZTniBOZ/udqpK3HsJ4LFUj6AhoZ92QDZV0qAtMty5Bmrq11xJc5se6DhmQsAMq+sECkuy5HnzMurucrT5JNqDgB5HAqaGkBG6QDVl+WIq3bEdRnqSpzZAjS83wBAbWkAaZflaD0Qm3MSHROg4YPY3ADSLsvRcqDiEq+kygZQzJgP74KmBlDfNF67LEeMZt/Iy93FBExezpNSswBo/j3QwG8tLNexp1AmgGKPOvHGQw/RAkjOxCz3YkkgABQuYqdzHEb9bmwmAMU7rO0hYgCNq1wARZ55Rzq90U/jmBnOq49Zrq9yJdEAaAyzETQXgGJcI+QrumYjaCYAxbhO2lt0zUbQXAAKvtlQgOiajaA8APmcCQ+ASAoAhYuu2QjKAlCa05iDbrgYIrpmI2g+AA3q1ejGPKbZGBXLlEQDoDHM5gtQiku5gh68ESSyZgDIxavSkC6IbMwBkEuhiS4mBUAJvUgB5HVDBIfW8H38YaDImlEC6OsvF8/ftxbvX75v27gVCoDGMaME0M2P4l9z8ea5H0DJ7sgCgNJ5BQL0+PPbssOpFj//xrMHSgaQ+wkyZGM+V4AEMYIcbfHrX/6uAPpeaNCjQFM973SbyBeyyx+g21feORB6oHHMSPdAj3/+SA4g9yeIkY35cgC6ufaehaW7saqzM9mYzxWgkyT6H28uhK5bNk6F+p0MDoCyeqWYxvv2QABoJDNKAD2+kUcPb15Vi94AeT7fwqk1XK3Jxny2APWIDECOvRvZmAMgh0IB0EhmMwUo6QN2HAkiG3MA1F9oWoBimjmKrBkA6vXyNScbcwDUW2jihwy6uZONOQDqLRQAjWaWC6CHy9XTD8PcCQHklEWTjfksAJI3uRrG0BCABtj2eZkEgJJ4DR7ChjE0AKDUT+p26oLIxnw+ADG2l8/vcBMAomiWEyDRAe3Y0ZUgQgA5FUA25vMASDxnQZFzcLxfLACiaJZvFlbdJjY+QL6TMACU14vMcaD0ALkQRDbmAKiv0DEA6k+jycZ8FgCVT1pwHb8YAKJpNkuA0ifRLgSRjfn0ARIPDip17uwOgCia5e6BBsgdIF9+BgEU06xfZM1mmUSPAVB/IWRjDoB6CvXOoQFQXi9ngB4un/7fZZEDJUiiAdCIZuiBur3sWved1EE25gCop1AANKLZHAHy5mdYa/QRRDbm0wfo4bI+DpQgBwJAI5qhB+r26lBfMWRjDoB6Ch0JoL5yyMYcAHUX6p9DA6C8XkSOA40GUA9BZGM+fYD85AhQAD/DAepKo8nGHAB1FjoiQN1fyZON+UwAknP5IVcWug5hYwLU1QWRjfk8ADrKM4EOZ+5ndRAEqLMLIhvzWQD05Upd07OPf2XqqADFNOsSWbNsJ5RdqlMRE5zSOiZAXYWRjfksAErXA/neWMHk1S8AFNFrUA509yxRDjQuQB0EkY359AFK+WVqyCzeDyAbsWRjPn2A/EQTIPtEjGzMAVBnoWMDZCWIbMznAVA5jEWfhY0PUEwzm8iaZQOIT78OG3b3bewkOoQfAJTXa+hxoCOfwh9c709GFyBbkWRjPhuA7r57J/87yjGJdrVz8HIUAEpsZj6QeC4vbx4CkNMDWnM8FHeNJ/EmlTEHEt9h7M/ZIfKR6KBZvPfHydjtke00ZtEDySyaz8TcJ2GUATLO5MnGfCYADZYTQEH8+LcGAEpptgCATOWSjflMAEpzRiIAGtlsbmck5gLIUDDZmM8CoFTnAwUdBgpqjROCyMZ8FgClOiMxG0DbE4LIxnwWACXqgcJm8QAorxeBMxLDOqCg1jghiGzMpw9QujMSwzogAJTXi8BxoIwAnRRONuYAyF5oVoBapZON+UwAEg8MWw1IgQAQSbPcBxJXO2d34km0UIMgsjGfBUBppvFuz+O2K7A1mnk02ZjPAqA0BxID+QFAeb3y90CZAWoSRDbmswAoTQ4UmEMDoLxe+WdhuQFqVIFszGcC0GBNA6C6DmRjPguAvly5j10tG3uhofwAoLxePrOwAeoHKDSHjtMaJUFkYz4LgMR1YQM1DYC2ACi6mfl0jgFXxTdt7IXSAKgkiGzMZwHQQ4o71VMAqO6CyMZ8FgB5aCJJdNUFkY05ALIVSgIgBoBimxkAOvDBa+g8HgBRNMsDkDgVWp0UPUDTAUhVhGzMpw+QmsMPuDFHw8ZaaOAlGQwAZfZyBkgdRTwOuDOHbmMtlAxAaiJGNuazAWjIN6lsWgAJgsjGHABZCiUDkOqCyMYcAFkKDeYnIkC8MmRjDoAshdIBiAGgmGZjXZlKCiC2Jhvz6QPkp4kBFKE6mgAQSw5QeA4NgPJ6AaBaPI3+FJMgAMTSAxRm3/AKlgAoZh8EgNiyAOK1AUCxzEYCKEK4IgMUkSAAxBYGEANA0cyWC1A8ggAQA0ChZtEEgEyFRpjFA6C8XpkBCnNveEXRJ1GjWAQBINYP0NdfLp6/byze//Hi4rptYymUHkDaNWIRzCJqrgDd/Cj+aYuPb67Z5x/etmwshdIEKBZBAIj1AvT481t2//K9tvj5xUfeF5VdUA9AMSIVuzXiEQSAWC9AAh5BTnNR9ELcQqj7wZrrcZ7fOVhU6zUhBQF0y3uhJocWain2QFJRuiD0QMwPoNsyre4DiG6Y6NaMmlcCgG6rFLoPoBg5dKLWINs3UvOKnkTr/c9UAYo0lQdAzGMaf//TW+3P0wQoEkEAiPUD9PhGHj28eVUu3lwIuU3jKQNE7WztuQLUo6km0QwABZoBIDr3DYluNheAiB/vBUAhZgCIxi3Qk5jNBaAoOXSq1ogwEQNAbMEAGZ4JHmAWLgB0WigAymQGgE69Ikk3CyYIALGkANE/bQsA+ZsBIKGwKgIgBoAimoUJAJ0UOgGAwuoIgFhSgOLk0ElbI+y6NQDElg5QGEEAiKUEaD0FgIIoB0AMAIV0QQCIJQUozLnhFU2nZgDIzwwAlfKvJwBiAAgAeZoBoEreFQVALCFAsXLo9K3hXVEAxACQkG9NARADQEIAyMMMAGnyrCoAYikBCjNueMWT2cwTdgDEAJCUZ10BEEsH0LRu5+1XWwDEAFAhr+oCIJYQoFg5NADK6wWA3MzWHlMxAMQAUCUPggAQA0C1htcYADEk0bWGd0EAiAEgTYOrDIAYANI1tM4AiAGghgZWGgCxdABFy6FHDdOwPAgAMQDU1HrQN/MAiCUDKN4sftwwrYdUHAAxAHSiATUHQCwdQGG2Da94Vk5m7lUHQAwAGeRcdwDEAJBJa8faAyCWCqCI/GQJk1seBIBYMoDi5dB5wuRUfwDEAJBNLjsAgFg4QOYnsq634z4BNoHWeDBvp9AD9ao3kUMPxJBEd6lvLwAQA0Bd2vbM5wEQA0Cd6nkYAgBiAKhb3QQBIJYKoIg5dOYwASAAFGbWkQcBIAaAHGQlKHvNxvACQMFm1ltJZ6/ZGF5IosPNbATlr9kIXgAogpmFIAI1S+8FgKKYGXeIRM1SewGgOGamyRiNmiX2AkCRzABQUwBoqE5nllRqltQLAEUz27YRIlOzlF4AKJ5Ze6/o1CyhFwCKaNbKpAnVLJ0XAIpq1tgxUjVL5QWA4prpJ+vSqlkiLwAU26zOpanVLIkXAIptVidC1GqWxAsAxTcr945ezRJ4AaAEZmt1JzOCNYvvBYCSmMkbUZGsWWwvAJTIbL3dEq0ZAGqKbJhiXn4LgJpaBEB8HCN6GyQApIsuQJ8G3pSzzyyaAJAu0gDJXCjK3gIgXQsCSGgdYTADQLoWBpBQKEMASNfyABLfkAUxBIB0LQ8gdcprAEIASNcSAZLaOt8j2MHMWwBI16QAEkOZH0IASNdyAZJDmc9IBoB0LRkgqZMrOELMBgsA6ZokQAKhYY0AgHQBICE+krn3RABIFwAqtd46JkQASBcAakh8XzbmTacBkK4ZAMRkSiROhLWPaABIFwAyqispAkC6AJBVciwzYASAdAGgDomTP9R5aNtEl7kCIF0UYp7AbK042q6LcQ0A6QJAw1SBNPwItkmUAPr6y8Xz941FbQ0Aim8WAyRKAN38KP7pi9oaAJTOrATJ9NrSuBUr5AjQ489v2f3L99qitoYBoDxmZQ9VvBrASl8xR4AEKgKZerFe872Q+YGaho8JlF62HivsNeiZqV0A6Ry6UeuleXQao5oRGsIA0BTNAFAqr4WYEQLIM4meWmvMzIwQQJ7T+Km1xszMKAH0+EYeNrx5VS0WL00bt0K9RDZMdM0oAdQjAETRDACl8lqIGQBK5bUQMwCUymshZgAolddCzABQKq+FmAGgVF4LMQNAqbwWYgaAUnktxGxKAEFLVRyAbFwlcY0gshWjW7OeigEgIiJbMwCki2zF6NYsC0DQYgSAoCABIChIAAgKEgCCgpQAoMbF82R0/8eLi2uilZMXKdCrGa/Rxau+iiUAqHHWPRU9vrlmn394S7NyN/K0c3I1u3nx8f6nviaLD1Dzuh8q+vziI/8oXZOs3OffFNfa0apZcfVfT8XiA9S88pCSeC9EsXJf//J3Xit6NSuo6anYkgC65V0ywcrdvronCdDnF38TaSMAKnX7nGKY2OOfPxIFiGfQPG0EQIVueQpNsXI36kNOr2ZF2jg6QPSyQalbORWlV7nHNxdCBNN7UZv+ecdSpvFiPipEs3IvaU7j+RDGP3ZjT+ObF89T0Y36nNOsnASIXs3EgcTrvorhqwwoSAAIChIAgoIEgKAgASAoSAAIChIAgoIEgKAgASAoSAAIChIAgoIEgLx0OHvNfz5cbnJXJLsAkJfunp3zn0eJ0bIFgPy0f/qh+LFwASA/HVc7PoLtclcjvwCQn75cbdjhybvc1cgvAOSpw5O/Xp3nrgQBASBP3T37w7dIoQGQv/YrpNAMAPlLpNEQAPLWESm0EADy1Bek0FIAyEsPlyt8iyEFgKAgASAoSAAIChIAgoIEgKAgASAoSAAICtI/AfbaaJ20Wy9PAAAAAElFTkSuQmCC" /><!-- --></p>
+</div>
+</div>
+<div id="method-2" class="section level3">
+<h3>Method 2</h3>
+<p>Method 2 requires cumulative probability truncation vectors for the count variables (<code>pois_eps</code> for Poisson and <code>nb_eps</code> for Negative Binomial). Each entry is the amount removed from the total cumulative probability when creating a finite support for that variable (see <code>max_count_support</code>). The entries may vary by variable.</p>
+<div id="step-3-verify-the-target-correlation-matrix-falls-within-the-feasible-correlation-bounds-1" class="section level4">
+<h4>Step 3: Verify the target correlation matrix falls within the feasible correlation bounds</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pois_eps &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">0.0001</span>, npois)
+nb_eps &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">0.0001</span>, nnb)
+
+<span class="co"># Make sure Rey is within upper and lower correlation limits</span>
+valid2 &lt;-<span class="st"> </span><span class="kw">valid_corr2</span>(<span class="dt">k_cat =</span> ncat, <span class="dt">k_cont =</span> ncont, <span class="dt">k_pois =</span> npois,
+                      <span class="dt">k_nb =</span> nnb, <span class="dt">method =</span> <span class="st">&quot;Polynomial&quot;</span>, <span class="dt">means =</span>  M[<span class="dv">1</span>, ],
+                      <span class="dt">vars =</span>  (M[<span class="dv">2</span>, ])^<span class="dv">2</span>, <span class="dt">skews =</span> M[<span class="dv">3</span>, ], <span class="dt">skurts =</span> M[<span class="dv">4</span>, ],
+                      <span class="dt">fifths =</span> M[<span class="dv">5</span>, ], <span class="dt">sixths =</span> M[<span class="dv">6</span>, ], <span class="dt">marginal =</span> marginal, 
+                      <span class="dt">lam =</span> lam, <span class="dt">pois_eps =</span> pois_eps, <span class="dt">size =</span> size, 
+                      <span class="dt">prob =</span> prob, <span class="dt">nb_eps =</span> nb_eps, <span class="dt">rho =</span> Rey, <span class="dt">seed =</span> seed)</code></pre></div>
+<pre><code>## 
+##  Constants: Distribution  1  
+## 
+##  Constants: Distribution  2  
+## 
+##  Constants: Distribution  3  
+## All correlations are in feasible range!</code></pre>
+</div>
+<div id="step-4-generate-the-variables-1" class="section level4">
+<h4>Step 4: Generate the variables</h4>
+<p>Simulate variables without the error loop.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">C &lt;-<span class="st"> </span><span class="kw">rcorrvar2</span>(<span class="dt">n =</span> <span class="dv">10000</span>, <span class="dt">k_cont =</span> ncont, <span class="dt">k_cat =</span> ncat, <span class="dt">k_pois =</span> npois,
+               <span class="dt">k_nb =</span> nnb, <span class="dt">method =</span> <span class="st">&quot;Polynomial&quot;</span>, <span class="dt">means =</span>  M[<span class="dv">1</span>, ], 
+               <span class="dt">vars =</span>  (M[<span class="dv">2</span>, ])^<span class="dv">2</span>, <span class="dt">skews =</span> M[<span class="dv">3</span>, ], <span class="dt">skurts =</span> M[<span class="dv">4</span>, ], 
+               <span class="dt">fifths =</span> M[<span class="dv">5</span>, ], <span class="dt">sixths =</span> M[<span class="dv">6</span>, ], <span class="dt">marginal =</span> marginal, 
+               <span class="dt">lam =</span> lam, <span class="dt">pois_eps =</span> pois_eps, <span class="dt">size =</span> size, <span class="dt">prob =</span> prob, 
+               <span class="dt">nb_eps =</span> nb_eps, <span class="dt">rho =</span> Rey, <span class="dt">seed =</span> seed)</code></pre></div>
+<pre><code>## 
+##  Constants: Distribution  1  
+## 
+##  Constants: Distribution  2  
+## 
+##  Constants: Distribution  3  
+## 
+## Constants calculation time: 0 minutes 
+## Intercorrelation calculation time: 0.044 minutes 
+## Error loop calculation time: 0 minutes 
+## Total Simulation time: 0.046 minutes</code></pre>
+<p>Look at the maximum correlation error:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">paste</span>(<span class="st">&quot;The maximum correlation error without the error loop is &quot;</span>, 
+          <span class="kw">round</span>(C$maxerr, <span class="dv">5</span>), <span class="st">&quot;.&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>))</code></pre></div>
+<pre><code>## The maximum correlation error without the error loop is 0.08803.</code></pre>
+<p>Look at the interquartile-range of correlation errors:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Ccorr_error =<span class="st"> </span><span class="kw">round</span>(C$correlations -<span class="st"> </span>Rey, <span class="dv">6</span>)
+<span class="kw">cat</span>(<span class="kw">paste</span>(<span class="st">&quot;The IQR of correlation errors without the error loop is [&quot;</span>, 
+          <span class="kw">round</span>(<span class="kw">quantile</span>(<span class="kw">as.numeric</span>(Ccorr_error), <span class="fl">0.25</span>), <span class="dv">5</span>), <span class="st">&quot;, &quot;</span>,
+          <span class="kw">round</span>(<span class="kw">quantile</span>(<span class="kw">as.numeric</span>(Ccorr_error), <span class="fl">0.75</span>), <span class="dv">5</span>), <span class="st">&quot;].&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>))</code></pre></div>
+<pre><code>## The IQR of correlation errors without the error loop is [-0.01864, 0.02457].</code></pre>
+<p>These results indicate that for these distributions, <strong>Method 1</strong> and <strong>Method 2</strong> have similar correlation errors.</p>
+<p>Simulate variables with the error loop (using default settings of <code>epsilon</code> = 0.001 and <code>maxit</code> = 1000).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">D &lt;-<span class="st"> </span><span class="kw">rcorrvar2</span>(<span class="dt">n =</span> <span class="dv">10000</span>, <span class="dt">k_cont =</span> ncont, <span class="dt">k_cat =</span> ncat, <span class="dt">k_pois =</span> npois,
+               <span class="dt">k_nb =</span> nnb, <span class="dt">method =</span> <span class="st">&quot;Polynomial&quot;</span>, <span class="dt">means =</span>  M[<span class="dv">1</span>, ], 
+               <span class="dt">vars =</span>  (M[<span class="dv">2</span>, ])^<span class="dv">2</span>, <span class="dt">skews =</span> M[<span class="dv">3</span>, ], <span class="dt">skurts =</span> M[<span class="dv">4</span>, ], 
+               <span class="dt">fifths =</span> M[<span class="dv">5</span>, ], <span class="dt">sixths =</span> M[<span class="dv">6</span>, ], <span class="dt">marginal =</span> marginal, 
+               <span class="dt">lam =</span> lam, <span class="dt">pois_eps =</span> pois_eps, <span class="dt">size =</span> size, <span class="dt">prob =</span> prob, 
+               <span class="dt">nb_eps =</span> nb_eps, <span class="dt">rho =</span> Rey, <span class="dt">seed =</span> seed, <span class="dt">errorloop =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## 
+##  Constants: Distribution  1  
+## 
+##  Constants: Distribution  2  
+## 
+##  Constants: Distribution  3  
+## 
+## Constants calculation time: 0 minutes 
+## Intercorrelation calculation time: 0.048 minutes 
+## Error loop calculation time: 0.03 minutes 
+## Total Simulation time: 0.08 minutes</code></pre>
+<p>Look at the maximum correlation error:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">paste</span>(<span class="st">&quot;The maximum correlation error with the error loop is &quot;</span>, 
+          <span class="kw">round</span>(D$maxerr, <span class="dv">5</span>), <span class="st">&quot;.&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>))</code></pre></div>
+<pre><code>## The maximum correlation error with the error loop is 0.001.</code></pre>
+<p>Look at the interquartile-range of correlation errors:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Dcorr_error =<span class="st"> </span><span class="kw">round</span>(D$correlations -<span class="st"> </span>Rey, <span class="dv">6</span>)
+<span class="kw">cat</span>(<span class="kw">paste</span>(<span class="st">&quot;The IQR of correlation errors with the error loop is [&quot;</span>, 
+          <span class="kw">round</span>(<span class="kw">quantile</span>(<span class="kw">as.numeric</span>(Dcorr_error), <span class="fl">0.25</span>), <span class="dv">5</span>), <span class="st">&quot;, &quot;</span>,
+          <span class="kw">round</span>(<span class="kw">quantile</span>(<span class="kw">as.numeric</span>(Dcorr_error), <span class="fl">0.75</span>), <span class="dv">5</span>), <span class="st">&quot;].&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>))</code></pre></div>
+<pre><code>## The IQR of correlation errors with the error loop is [-0.00033, 0.00011].</code></pre>
+<p>The simulation utilizing the error loop provides better results and will be chosen for subsequent analysis.</p>
+</div>
+<div id="step-5-summarize-the-results-numerically-1" class="section level4">
+<h4>Step 5: Summarize the results numerically</h4>
+<p><strong>1) Ordinal variables</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr::<span class="kw">kable</span>(D$summary_ordinal[[<span class="dv">1</span>]], <span class="dt">caption =</span> <span class="st">&quot;Variable 1&quot;</span>)</code></pre></div>
+<table>
+<caption>Variable 1</caption>
+<thead>
+<tr class="header">
+<th align="right">Target</th>
+<th align="right">Simulated</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.3</td>
+<td align="right">0.2989</td>
+</tr>
+<tr class="even">
+<td align="right">1.0</td>
+<td align="right">1.0000</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr::<span class="kw">kable</span>(D$summary_ordinal[[<span class="dv">2</span>]], <span class="dt">caption =</span> <span class="st">&quot;Variable 2&quot;</span>)</code></pre></div>
+<table>
+<caption>Variable 2</caption>
+<thead>
+<tr class="header">
+<th align="right">Target</th>
+<th align="right">Simulated</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.2</td>
+<td align="right">0.2002</td>
+</tr>
+<tr class="even">
+<td align="right">0.5</td>
+<td align="right">0.4996</td>
+</tr>
+<tr class="odd">
+<td align="right">0.9</td>
+<td align="right">0.9029</td>
+</tr>
+<tr class="even">
+<td align="right">1.0</td>
+<td align="right">1.0000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>2) Count variables</strong></p>
+<p>Poisson variables: Note the expected means and variances are also given.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(D$summary_Poisson[, <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>:<span class="dv">6</span>, <span class="dv">8</span>:<span class="dv">9</span>)], <span class="dt">nrow =</span> <span class="dv">3</span>, <span class="dt">ncol =</span> <span class="dv">7</span>, 
+          <span class="dt">byrow =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">Distribution</th>
+<th align="right">mean</th>
+<th align="right">Exp_mean</th>
+<th align="right">var</th>
+<th align="right">Exp_var</th>
+<th align="right">min</th>
+<th align="right">max</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">1.0010</td>
+<td align="right">1</td>
+<td align="right">1.000099</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">5.0038</td>
+<td align="right">5</td>
+<td align="right">4.996485</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">15</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">9.9992</td>
+<td align="right">10</td>
+<td align="right">9.943794</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">24</td>
+</tr>
+</tbody>
+</table>
+<p>Negative Binomial variables:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(D$summary_Neg_Bin[, <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>:<span class="dv">7</span>, <span class="dv">9</span>:<span class="dv">10</span>)], <span class="dt">nrow =</span> <span class="dv">2</span>, <span class="dt">ncol =</span> <span class="dv">8</span>, 
+          <span class="dt">byrow =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">Distribution</th>
+<th align="right">success_prob</th>
+<th align="right">mean</th>
+<th align="right">Exp_mean</th>
+<th align="right">var</th>
+<th align="right">Exp_var</th>
+<th align="right">min</th>
+<th align="right">max</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">0.2</td>
+<td align="right">11.9988</td>
+<td align="right">12.0</td>
+<td align="right">59.528751</td>
+<td align="right">60.000</td>
+<td align="right">0</td>
+<td align="right">60</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">0.8</td>
+<td align="right">1.4968</td>
+<td align="right">1.5</td>
+<td align="right">1.851175</td>
+<td align="right">1.875</td>
+<td align="right">0</td>
+<td align="right">9</td>
+</tr>
+</tbody>
+</table>
+<p><strong>3) Continuous variables</strong></p>
+<p>The constants are the same for both methods.</p>
+<p>Target distributions:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(<span class="kw">round</span>(D$summary_targetcont, <span class="dv">5</span>), <span class="dt">nrow =</span> <span class="dv">3</span>, <span class="dt">ncol =</span> <span class="dv">7</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Distribution</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">skew</th>
+<th align="right">skurtosis</th>
+<th align="right">fifth</th>
+<th align="right">sixth</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>M1</td>
+<td align="right">1</td>
+<td align="right">0.00000</td>
+<td align="right">1.00000</td>
+<td align="right">0.00000</td>
+<td align="right">0.000</td>
+<td align="right">0.00000</td>
+<td align="right">0.00000</td>
+</tr>
+<tr class="even">
+<td>M2</td>
+<td align="right">2</td>
+<td align="right">4.00000</td>
+<td align="right">2.82843</td>
+<td align="right">1.41421</td>
+<td align="right">3.000</td>
+<td align="right">8.48528</td>
+<td align="right">30.00000</td>
+</tr>
+<tr class="odd">
+<td>M3</td>
+<td align="right">3</td>
+<td align="right">0.66667</td>
+<td align="right">0.17817</td>
+<td align="right">-0.46771</td>
+<td align="right">-0.375</td>
+<td align="right">1.40312</td>
+<td align="right">-0.42614</td>
+</tr>
+</tbody>
+</table>
+<p>Simulated distributions:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(<span class="kw">round</span>(D$summary_continuous[, <span class="kw">c</span>(<span class="st">&quot;Distribution&quot;</span>, <span class="st">&quot;mean&quot;</span>, <span class="st">&quot;sd&quot;</span>, 
+                                         <span class="st">&quot;skew&quot;</span>, <span class="st">&quot;skurtosis&quot;</span>, <span class="st">&quot;fifth&quot;</span>, 
+                                         <span class="st">&quot;sixth&quot;</span>)], <span class="dv">5</span>), <span class="dt">nrow =</span> <span class="dv">3</span>, <span class="dt">ncol =</span> <span class="dv">7</span>, 
+          <span class="dt">byrow =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Distribution</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">skew</th>
+<th align="right">skurtosis</th>
+<th align="right">fifth</th>
+<th align="right">sixth</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>X1</td>
+<td align="right">1</td>
+<td align="right">0.00000</td>
+<td align="right">1.00000</td>
+<td align="right">-0.01293</td>
+<td align="right">-0.08218</td>
+<td align="right">-0.00831</td>
+<td align="right">0.32436</td>
+</tr>
+<tr class="even">
+<td>X2</td>
+<td align="right">2</td>
+<td align="right">3.99971</td>
+<td align="right">2.81240</td>
+<td align="right">1.34867</td>
+<td align="right">2.69738</td>
+<td align="right">7.56175</td>
+<td align="right">26.58821</td>
+</tr>
+<tr class="odd">
+<td>X3</td>
+<td align="right">3</td>
+<td align="right">0.66666</td>
+<td align="right">0.17859</td>
+<td align="right">-0.46062</td>
+<td align="right">-0.40467</td>
+<td align="right">1.39676</td>
+<td align="right">-0.22505</td>
+</tr>
+</tbody>
+</table>
+<p>Valid power method pdf check:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">D$valid.pdf</code></pre></div>
+<pre><code>## [1] &quot;TRUE&quot; &quot;TRUE&quot; &quot;TRUE&quot;</code></pre>
+<p>All continuous variables have valid power method pdfs. We can compute <strong>additional summary statistics:</strong><br />
+1) Normal(<span class="math inline">\(\Large 0,1\)</span>) Distribution</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(<span class="kw">t</span>(<span class="kw">round</span>(<span class="kw">stats_pdf</span>(<span class="dt">c =</span> D$constants[<span class="dv">1</span>, ], <span class="dt">method =</span> <span class="st">&quot;Polynomial&quot;</span>, 
+                            <span class="dt">alpha =</span> <span class="fl">0.025</span>), <span class="dv">4</span>)))</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">trimmed_mean</th>
+<th align="right">median</th>
+<th align="right">mode</th>
+<th align="right">max_height</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.3989</td>
+</tr>
+</tbody>
+</table>
+<ol start="2" style="list-style-type: decimal">
+<li>Chisq (<span class="math inline">\(\Large df = 4\)</span>) Distribution</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(<span class="kw">t</span>(<span class="kw">round</span>(<span class="kw">stats_pdf</span>(<span class="dt">c =</span> B$constants[<span class="dv">2</span>, ], <span class="dt">method =</span> <span class="st">&quot;Polynomial&quot;</span>, 
+                            <span class="dt">alpha =</span> <span class="fl">0.025</span>), <span class="dv">4</span>)))</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">trimmed_mean</th>
+<th align="right">median</th>
+<th align="right">mode</th>
+<th align="right">max_height</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">-0.0536</td>
+<td align="right">-0.2275</td>
+<td align="right">-0.7095</td>
+<td align="right">0.5203</td>
+</tr>
+</tbody>
+</table>
+<ol start="3" style="list-style-type: decimal">
+<li>Beta (<span class="math inline">\(\Large \alpha = 4, \beta = 2\)</span>) Distribution</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(<span class="kw">t</span>(<span class="kw">round</span>(<span class="kw">stats_pdf</span>(<span class="dt">c =</span> B$constants[<span class="dv">3</span>, ], <span class="dt">method =</span> <span class="st">&quot;Polynomial&quot;</span>, 
+                            <span class="dt">alpha =</span> <span class="fl">0.025</span>), <span class="dv">4</span>)))</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">trimmed_mean</th>
+<th align="right">median</th>
+<th align="right">mode</th>
+<th align="right">max_height</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.0215</td>
+<td align="right">0.1083</td>
+<td align="right">0.4517</td>
+<td align="right">0.3745</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="step-6-summarize-the-results-graphically-1" class="section level4">
+<h4>Step 6: Summarize the results graphically</h4>
+<p>Since the methods vary primarily according to the calculation of the intermediate correlation for count variables, we will only look at the distributions of two count variables.</p>
+<p>Look at the Poisson (<span class="math inline">\(\Large \lambda = 5\)</span>) distribution (<span class="math inline">\(\Large 2^{nd}\)</span> Poisson variable):</p>
+<ol style="list-style-type: decimal">
+<li>Simulated Data Values and Target Distribution</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_sim_theory</span>(D$Poisson_variables[, <span class="dv">2</span>], <span class="dt">cont_var =</span> <span class="ot">FALSE</span>, <span class="dt">Dist =</span> <span class="st">&quot;Poisson&quot;</span>, 
+                <span class="dt">params =</span> <span class="dv">5</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Simulated Data and Target Distribution PDFs</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_sim_pdf_theory</span>(D$Poisson_variables[, <span class="dv">2</span>], <span class="dt">cont_var =</span> <span class="ot">FALSE</span>, 
+                    <span class="dt">Dist =</span> <span class="st">&quot;Poisson&quot;</span>, <span class="dt">params =</span> <span class="dv">5</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Look at the Negative Binomial (<span class="math inline">\(\Large size = 3,\ prob = 0.2\)</span>) distribution (<span class="math inline">\(\Large 1^{st}\)</span> Negative Binomial variable):</p>
+<ol style="list-style-type: decimal">
+<li>Simulated Data Values and Target Distribution</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_sim_theory</span>(D$Neg_Bin_variables[, <span class="dv">1</span>], <span class="dt">cont_var =</span> <span class="ot">FALSE</span>, 
+                <span class="dt">Dist =</span> <span class="st">&quot;Negative_Binomial&quot;</span>, <span class="dt">params =</span> <span class="kw">c</span>(<span class="dv">3</span>, <span class="fl">0.2</span>))</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Simulated Data and Target Distribution PDFs</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_sim_pdf_theory</span>(D$Neg_Bin_variables[, <span class="dv">1</span>], <span class="dt">cont_var =</span> <span class="ot">FALSE</span>, 
+                    <span class="dt">Dist =</span> <span class="st">&quot;Negative_Binomial&quot;</span>, <span class="dt">params =</span> <span class="kw">c</span>(<span class="dv">3</span>, <span class="fl">0.2</span>))</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+</div>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-Fleish">
+<p>Fleishman, AI. 1978. “A Method for Simulating Non-Normal Distributions.” <em>Psychometrika</em> 43: 521–32. doi:<a href="https://doi.org/10.1007/BF02293811">10.1007/BF02293811</a>.</p>
+</div>
+<div id="ref-Head2002">
+<p>Headrick, TC. 2002. “Fast Fifth-Order Polynomial Transforms for Generating Univariate and Multivariate Non-Normal Distributions.” <em>Computational Statistics &amp; Data Analysis</em> 40 (4): 685–711. doi:<a href="https://doi.org/10.1016/S0167-9473(02)00072-5">10.1016/S0167-9473(02)00072-5</a>.</p>
+</div>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
