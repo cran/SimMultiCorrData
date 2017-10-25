@@ -2,9 +2,9 @@
 % Please edit documentation in R/findintercorr_pois.R
 \name{findintercorr_pois}
 \alias{findintercorr_pois}
-\title{Calculate Intermediate MVN Correlation for Poisson Variables: Method 1}
+\title{Calculate Intermediate MVN Correlation for Poisson Variables: Correlation Method 1}
 \usage{
-findintercorr_pois(rho_pois, lam, nrand = 100000, seed = 1234)
+findintercorr_pois(rho_pois, lam, nrand = 1e+05, seed = 1234)
 }
 \arguments{
 \item{rho_pois}{a \code{k_pois x k_pois} matrix of target correlations}

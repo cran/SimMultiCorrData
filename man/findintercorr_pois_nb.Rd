@@ -2,10 +2,10 @@
 % Please edit documentation in R/findintercorr_pois_nb.R
 \name{findintercorr_pois_nb}
 \alias{findintercorr_pois_nb}
-\title{Calculate Intermediate MVN Correlation for Poisson - Negative Binomial Variables: Method 1}
+\title{Calculate Intermediate MVN Correlation for Poisson - Negative Binomial Variables: Correlation Method 1}
 \usage{
 findintercorr_pois_nb(rho_pois_nb, lam, size, prob, mu = NULL,
-  nrand = 100000, seed = 1234)
+  nrand = 1e+05, seed = 1234)
 }
 \arguments{
 \item{rho_pois_nb}{a \code{k_pois x k_nb} matrix of target correlations}
