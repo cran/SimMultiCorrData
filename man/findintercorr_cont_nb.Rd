@@ -5,7 +5,7 @@
 \title{Calculate Intermediate MVN Correlation for Continuous - Negative Binomial Variables: Correlation Method 1}
 \usage{
 findintercorr_cont_nb(method, constants, rho_cont_nb, size, prob, mu = NULL,
-  nrand = 1e+05, seed = 1234)
+  nrand = 100000, seed = 1234)
 }
 \arguments{
 \item{method}{the method used to generate the \code{k_cont} continuous variables.  "Fleishman" uses a third-order polynomial transformation
@@ -16,7 +16,7 @@ c0, c1, c2, c3, c4, c5 (if \code{method} = "Polynomial"), like that returned by 
 
 \item{rho_cont_nb}{a \code{k_cont x k_nb} matrix of target correlations among continuous and Negative Binomial variables}
 
-\item{size}{a vector of size parameters for the Negative Binomial variables (see \code{\link[stats]{dnbinom}})}
+\item{size}{a vector of size parameters for the Negative Binomial variables (see \code{\link[stats]{NegBinomial}})}
 
 \item{prob}{a vector of success probability parameters}
 

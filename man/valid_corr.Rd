@@ -8,7 +8,7 @@ valid_corr(k_cat = 0, k_cont = 0, k_pois = 0, k_nb = 0,
   method = c("Fleishman", "Polynomial"), means = NULL, vars = NULL,
   skews = NULL, skurts = NULL, fifths = NULL, sixths = NULL,
   Six = list(), marginal = list(), lam = NULL, size = NULL,
-  prob = NULL, mu = NULL, rho = NULL, n = 1e+05, seed = 1234)
+  prob = NULL, mu = NULL, rho = NULL, n = 100000, seed = 1234)
 }
 \arguments{
 \item{k_cat}{the number of ordinal (r >= 2 categories) variables (default = 0)}
@@ -42,9 +42,9 @@ component equal to NULL}
 probabilities defining the marginal distribution of the i-th variable;
 if the variable can take r values, the vector will contain r - 1 probabilities (the r-th is assumed to be 1; default = list())}
 
-\item{lam}{a vector of lambda (> 0) constants for the Poisson variables (see \code{\link[stats]{dpois}})}
+\item{lam}{a vector of lambda (> 0) constants for the Poisson variables (see \code{\link[stats]{Poisson}})}
 
-\item{size}{a vector of size parameters for the Negative Binomial variables (see \code{\link[stats]{dnbinom}})}
+\item{size}{a vector of size parameters for the Negative Binomial variables (see \code{\link[stats]{NegBinomial}})}
 
 \item{prob}{a vector of success probability parameters}
 
@@ -203,6 +203,10 @@ are used for the correlation bounds.
 }
 
 \examples{
+valid_corr(n = 1000, k_cat = 1, k_cont = 1, method = "Polynomial",
+  means = 0, vars = 1, skews = 0, skurts = 0, fifths = 0, sixths = 0,
+  marginal = list(c(1/3, 2/3)), rho = matrix(c(1, 0.4, 0.4, 1), 2, 2))
+
 \dontrun{
 
 # Binary, Ordinal, Continuous, Poisson, and Negative Binomial Variables

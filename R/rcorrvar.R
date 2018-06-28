@@ -137,8 +137,8 @@
 #'     if not provided (i.e. \code{support = list()}), the default is for the i-th element to be the
 #'     vector 1, ..., r
 #' @param nrand the number of random numbers to generate in calculating intermediate correlations (default = 10000)
-#' @param lam a vector of lambda (> 0) constants for the Poisson variables (see \code{\link[stats]{dpois}})
-#' @param size a vector of size parameters for the Negative Binomial variables (see \code{\link[stats]{dnbinom}})
+#' @param lam a vector of lambda (> 0) constants for the Poisson variables (see \code{\link[stats]{Poisson}})
+#' @param size a vector of size parameters for the Negative Binomial variables (see \code{\link[stats]{NegBinomial}})
 #' @param prob a vector of success probability parameters
 #' @param mu a vector of mean parameters (*Note: either \code{prob} or \code{mu} should be supplied for all Negative Binomial variables,
 #'     not a mixture; default = NULL)
@@ -231,9 +231,6 @@
 #' Barbiero A, Ferrari PA (2015). GenOrd: Simulation of Discrete Random Variables with Given
 #'     Correlation Matrix and Marginal Distributions. R package version 1.4.0. \url{https://CRAN.R-project.org/package=GenOrd}
 #'
-#' Berend H (2017). nleqslv: Solve Systems of Nonlinear Equations. R package version 3.2.
-#'     \url{https://CRAN.R-project.org/package=nleqslv}
-#'
 #' Demirtas H & Hedeker D (2011). A practical way for computing approximate lower and upper correlation bounds.
 #'     American Statistician, 65(2): 104-109. \doi{10.1198/tast.2011.10090}.
 #'
@@ -246,6 +243,9 @@
 #' Fleishman AI (1978). A Method for Simulating Non-normal Distributions. Psychometrika, 43, 521-532. \doi{10.1007/BF02293811}.
 #'
 #' Frechet M.  Sur les tableaux de correlation dont les marges sont donnees.  Ann. l'Univ. Lyon SectA.  1951;14:53-77.
+#'
+#' Hasselman B (2018). nleqslv: Solve Systems of Nonlinear Equations. R package version 3.3.2.
+#'     \url{https://CRAN.R-project.org/package=nleqslv}
 #'
 #' Headrick TC (2002). Fast Fifth-order Polynomial Transforms for Generating Univariate and Multivariate
 #'     Non-normal Distributions. Computational Statistics & Data Analysis, 40(4):685-711. \doi{10.1016/S0167-9473(02)00072-5}.
@@ -273,14 +273,20 @@
 #'
 #' Vale CD & Maurelli VA (1983). Simulating Multivariate Nonnormal Distributions. Psychometrika, 48, 465-471. \doi{10.1007/BF02293687}.
 #'
-#' Varadhan R, Gilbert PD (2009). BB: An R Package for Solving a Large System of Nonlinear Equations and for
+#' Varadhan R, Gilbert P (2009). BB: An R Package for Solving a Large System of Nonlinear Equations and for
 #'     Optimizing a High-Dimensional Nonlinear Objective Function, J. Statistical Software, 32(4). \doi{10.18637/jss.v032.i04}.
 #'     \url{http://www.jstatsoft.org/v32/i04/}
 #'
 #' Yahav I & Shmueli G (2012). On Generating Multivariate Poisson Data in Management Science Applications. Applied Stochastic
 #'     Models in Business and Industry, 28(1): 91-102. \doi{10.1002/asmb.901}.
 #'
-#' @examples \dontrun{
+#' @examples
+#' Sim1 <- rcorrvar(n = 1000, k_cat = 1, k_cont = 1, method = "Polynomial",
+#'   means = 0, vars = 1, skews = 0, skurts = 0, fifths = 0, sixths = 0,
+#'   marginal = list(c(1/3, 2/3)), support = list(0:2),
+#'   rho = matrix(c(1, 0.4, 0.4, 1), 2, 2))
+#'
+#' \dontrun{
 #'
 #' # Binary, Ordinal, Continuous, Poisson, and Negative Binomial Variables
 #'
@@ -424,17 +430,19 @@ rcorrvar <- function(n = 10000, k_cont = 0, k_cat = 0, k_pois = 0, k_nb = 0,
       if (skews[i] %in% skews[1:(i - 1)]) {
         csame <- which(skews[1:(i - 1)] == skews[i])
         for (j in 1:length(csame)) {
-          if (method == "Polynomial" &
-              (skurts[i] == skurts[csame[j]]) &
-              (fifths[i] == fifths[csame[j]]) &
-              (sixths[i] == sixths[csame[j]])) {
-            csame.dist <- rbind(csame.dist, c(csame[j], i))
-            break
+          if (method == "Polynomial") {
+            if ((skurts[i] == skurts[csame[j]]) &
+                (fifths[i] == fifths[csame[j]]) &
+                (sixths[i] == sixths[csame[j]])) {
+              csame.dist <- rbind(csame.dist, c(csame[j], i))
+              break
+            }
           }
-          if (method == "Fleishman" &
-              (skurts[i] == skurts[csame[j]])) {
-            csame.dist <- rbind(csame.dist, c(csame[j], i))
-            break
+          if (method == "Fleishman") {
+            if (skurts[i] == skurts[csame[j]]) {
+              csame.dist <- rbind(csame.dist, c(csame[j], i))
+              break
+            }
           }
         }
       }

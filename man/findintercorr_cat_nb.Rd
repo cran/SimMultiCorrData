@@ -5,7 +5,7 @@
 \title{Calculate Intermediate MVN Correlation for Ordinal - Negative Binomial Variables: Correlation Method 1}
 \usage{
 findintercorr_cat_nb(rho_cat_nb, marginal, size, prob, mu = NULL,
-  nrand = 1e+05, seed = 1234)
+  nrand = 100000, seed = 1234)
 }
 \arguments{
 \item{rho_cat_nb}{a \code{k_cat x k_nb} matrix of target correlations among ordinal and Negative Binomial variables}
@@ -14,7 +14,7 @@ findintercorr_cat_nb(rho_cat_nb, marginal, size, prob, mu = NULL,
 probabilities defining the marginal distribution of the i-th variable;
 if the variable can take r values, the vector will contain r - 1 probabilities (the r-th is assumed to be 1)}
 
-\item{size}{a vector of size parameters for the Negative Binomial variables (see \code{\link[stats]{dnbinom}})}
+\item{size}{a vector of size parameters for the Negative Binomial variables (see \code{\link[stats]{NegBinomial}})}
 
 \item{prob}{a vector of success probability parameters}
 

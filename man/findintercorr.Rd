@@ -6,7 +6,7 @@
 \usage{
 findintercorr(n, k_cont = 0, k_cat = 0, k_pois = 0, k_nb = 0,
   method = c("Fleishman", "Polynomial"), constants, marginal = list(),
-  support = list(), nrand = 1e+05, lam = NULL, size = NULL,
+  support = list(), nrand = 100000, lam = NULL, size = NULL,
   prob = NULL, mu = NULL, rho = NULL, seed = 1234, epsilon = 0.001,
   maxit = 1000)
 }
@@ -37,9 +37,9 @@ ordered support values; if not provided (i.e. \code{support} = list()), the defa
 
 \item{nrand}{the number of random numbers to generate in calculating the bound (default = 10000)}
 
-\item{lam}{a vector of lambda (> 0) constants for the Poisson variables (see \code{\link[stats]{dpois}})}
+\item{lam}{a vector of lambda (> 0) constants for the Poisson variables (see \code{\link[stats]{Poisson}})}
 
-\item{size}{a vector of size parameters for the Negative Binomial variables (see \code{\link[stats]{dnbinom}})}
+\item{size}{a vector of size parameters for the Negative Binomial variables (see \code{\link[stats]{NegBinomial}})}
 
 \item{prob}{a vector of success probability parameters}
 

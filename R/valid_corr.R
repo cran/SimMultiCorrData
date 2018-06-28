@@ -118,8 +118,8 @@
 #' @param marginal a list of length equal to \code{k_cat}; the i-th element is a vector of the cumulative
 #'     probabilities defining the marginal distribution of the i-th variable;
 #'     if the variable can take r values, the vector will contain r - 1 probabilities (the r-th is assumed to be 1; default = list())
-#' @param lam a vector of lambda (> 0) constants for the Poisson variables (see \code{\link[stats]{dpois}})
-#' @param size a vector of size parameters for the Negative Binomial variables (see \code{\link[stats]{dnbinom}})
+#' @param lam a vector of lambda (> 0) constants for the Poisson variables (see \code{\link[stats]{Poisson}})
+#' @param size a vector of size parameters for the Negative Binomial variables (see \code{\link[stats]{NegBinomial}})
 #' @param prob a vector of success probability parameters
 #' @param mu a vector of mean parameters (*Note: either \code{prob} or \code{mu} should be supplied for all Negative Binomial variables,
 #'     not a mixture; default = NULL)
@@ -161,7 +161,12 @@
 #' Hakan Demirtas, Yiran Hu and Rawan Allozi (2017). PoisBinOrdNor: Data Generation with Poisson, Binary, Ordinal and Normal Components.
 #'     R package version 1.4. \url{https://CRAN.R-project.org/package=PoisBinOrdNor}
 #'
-#' @examples \dontrun{
+#' @examples
+#' valid_corr(n = 1000, k_cat = 1, k_cont = 1, method = "Polynomial",
+#'   means = 0, vars = 1, skews = 0, skurts = 0, fifths = 0, sixths = 0,
+#'   marginal = list(c(1/3, 2/3)), rho = matrix(c(1, 0.4, 0.4, 1), 2, 2))
+#'
+#' \dontrun{
 #'
 #' # Binary, Ordinal, Continuous, Poisson, and Negative Binomial Variables
 #'
@@ -255,17 +260,19 @@ valid_corr <- function(k_cat = 0, k_cont = 0, k_pois = 0, k_nb = 0,
       if (skews[i] %in% skews[1:(i - 1)]) {
         csame <- which(skews[1:(i - 1)] == skews[i])
         for (j in 1:length(csame)) {
-          if (method == "Polynomial" &
-              (skurts[i] == skurts[csame[j]]) &
-              (fifths[i] == fifths[csame[j]]) &
-              (sixths[i] == sixths[csame[j]])) {
-            csame.dist <- rbind(csame.dist, c(csame[j], i))
-            break
+          if (method == "Polynomial") {
+            if ((skurts[i] == skurts[csame[j]]) &
+                (fifths[i] == fifths[csame[j]]) &
+                (sixths[i] == sixths[csame[j]])) {
+              csame.dist <- rbind(csame.dist, c(csame[j], i))
+              break
+            }
           }
-          if (method == "Fleishman" &
-              (skurts[i] == skurts[csame[j]])) {
-            csame.dist <- rbind(csame.dist, c(csame[j], i))
-            break
+          if (method == "Fleishman") {
+            if (skurts[i] == skurts[csame[j]]) {
+              csame.dist <- rbind(csame.dist, c(csame[j], i))
+              break
+            }
           }
         }
       }
